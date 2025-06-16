@@ -1,11 +1,13 @@
 import sys
 import shutil
 import subprocess
+from pathlib import Path
 
 commands = {
     "echo": lambda args: print(" ".join(args)),
     "exit":lambda exit_code:sys.exit(int(exit_code[0])) if exit_code else 0,
-    "type":lambda command:type(command)
+    "type":lambda command:type(command),
+    "pwd":lambda arg:print(Path.cwd())
 }
 def type(command):
     if command[0] in commands:
@@ -23,7 +25,7 @@ def main():
         sys.stdout.write("$ ")
         first = input().strip().split()
         command = first[0] if first else ""
-        
+
         args = first[1:]
         if command in commands:
             commands[command](args)
