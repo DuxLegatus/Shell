@@ -3,7 +3,6 @@ import sys
 
 def main():
     # Uncomment this block to pass the first stage
-    input()
     while True:
         sys.stdout.write("$ ")
         command = input()
