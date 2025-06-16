@@ -6,8 +6,9 @@ import os
 commands = {
     "echo": lambda args: print(" ".join(args)),
     "exit":lambda exit_code:sys.exit(int(exit_code[0])) if exit_code else 0,
-    "type":lambda command:type(command),
     "pwd": lambda: print(os.getcwd()),
+    "type":lambda command:type(command),
+    
 }
 def type(command):
     if command[0] in commands:
@@ -28,7 +29,7 @@ def main():
 
         args = first[1:]
         if command in commands:
-            commands[command](*args)
+            commands[command](args)
         elif shutil.which(command):
             subprocess.run([command] + args)
            
