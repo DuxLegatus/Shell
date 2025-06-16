@@ -13,9 +13,11 @@ commands = {
 }
 
 def cd(path):
-    expanded_path = os.chdir(os.path.expanduser(path))
-    if os.path.exists(expanded_path):
-        os.chdir(expanded_path)
+    
+    if os.path.exists(path):
+        os.chdir(path)
+    elif path == "~":
+        os.chdir(Path.home())
     else:
         print(f"cd: {path}: No such file or directory")
     
