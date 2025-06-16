@@ -1,9 +1,11 @@
 import sys
+import shutil
 
 commands = {
     "echo": lambda args: print(" ".join(args)),
     "exit":lambda exit_code:sys.exit(int(exit_code[0])) if exit_code else 0,
-    "type":lambda command:print(f"{command[0]} is a shell builtin") if command[0] in commands else print(f"{command[0]}: not found")
+    "type":lambda command:print(f"{command[0]} is {shutil.which(command[0])}")    
+    if shutil.which(command[0]) else print(f"{command[0]}: not found")
 }
 def main():
     # Uncomment this block to pass the first stage
