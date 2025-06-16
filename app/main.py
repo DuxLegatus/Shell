@@ -3,6 +3,9 @@ import shutil
 import subprocess
 import os
 from pathlib import Path
+import shlex
+
+
 commands = {
     "echo": lambda *args: print(" ".join(args)),
     "exit":lambda exit_code:sys.exit(int(exit_code[0])) if exit_code else 0,
@@ -36,7 +39,7 @@ def main():
     # Uncomment this block to pass the first stage
     while True:
         sys.stdout.write("$ ")
-        first = input().strip().split()
+        first = shlex.split(input().strip())
         command = first[0] if first else ""
 
         args = first[1:]
