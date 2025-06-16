@@ -10,7 +10,7 @@ def type(command):
     if command[0] in commands:
         print(f"{command[0]} is a shell builtin")    
     elif shutil.which(command[0]):
-        print(f"{command[0]}: is {shutil.which(command[0])}")
+        print(f"{command[0]} is {shutil.which(command[0])}")
     else:
         print(f"{command[0]}: not found")
 
