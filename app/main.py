@@ -2,7 +2,7 @@ import sys
 import shutil
 import subprocess
 import os
-
+from pathlib import Path
 commands = {
     "echo": lambda *args: print(" ".join(args)),
     "exit":lambda exit_code:sys.exit(int(exit_code[0])) if exit_code else 0,
@@ -11,6 +11,16 @@ commands = {
     "type":lambda *command:type(command),
     
 }
+
+def cd(path):
+    expanded_path = os.chdir(os.path.expanduser(path))
+    if os.path.exists(expanded_path):
+        os.chdir(expanded_path)
+    else:
+        print(f"cd: {path}: No such file or directory")
+    
+
+
 def type(command):
     if command[0] in commands:
         print(f"{command[0]} is a shell builtin")    
