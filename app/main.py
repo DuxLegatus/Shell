@@ -7,6 +7,7 @@ commands = {
     "echo": lambda *args: print(" ".join(args)),
     "exit":lambda exit_code:sys.exit(int(exit_code[0])) if exit_code else 0,
     "pwd": lambda: print(os.getcwd()),
+    "cd":lambda path: os.chdir(path),
     "type":lambda *command:type(command),
     
 }
