@@ -13,11 +13,10 @@ commands = {
 }
 
 def cd(path):
-    
-    if os.path.exists(path):
+    if path == "~":
+            os.chdir(Path.home())
+    elif os.path.exists(path):
         os.chdir(path)
-    elif path == "~":
-        os.chdir(Path.home())
     else:
         print(f"cd: {path}: No such file or directory")
     
