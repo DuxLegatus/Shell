@@ -1,5 +1,6 @@
 import sys
 import shutil
+import subprocess
 
 commands = {
     "echo": lambda args: print(" ".join(args)),
@@ -25,6 +26,9 @@ def main():
         args = first[1:]
         if command in commands:
             commands[command](args)
+        elif shutil.which(command[0]):
+            subprocess.run([command] + args)
+           
         else:
             print(f"{command}: command not found")
         
