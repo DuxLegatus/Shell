@@ -10,7 +10,7 @@ def main():
     while True:
         sys.stdout.write("$ ")
         first = input().strip().split()
-        command = first[0]
+        command = first[0] if first else ""
         args = first[1:]
         if command in commands:
             commands[command](args)
