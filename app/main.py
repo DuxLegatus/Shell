@@ -1,20 +1,20 @@
 import sys
 
-
+commands = {
+    "echo": lambda args: print(" ".join(args)),
+    "exit":lambda exit_code:sys.exit(int(exit_code[0])) if exit_code else 0,
+    "type":lambda command:print("exit is a shell builtin") if command[0] in commands else print(f"{command}: command not found")
+}
 def main():
     # Uncomment this block to pass the first stage
     while True:
         sys.stdout.write("$ ")
-        command = input()
-        if command == "exit 0":
-            sys.exit()
-        elif command.startswith("echo "):
-            print(command[5:])
-        else:
-            print(f"{command}: command not found")
-
-
-    # Wait for user input
+        first = input().strip().split()
+        command = first[0]
+        args = first[1:]
+        if command in commands:
+            commands[command](args)
+        
 
 
 if __name__ == "__main__":
