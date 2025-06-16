@@ -26,7 +26,7 @@ def main():
         args = first[1:]
         if command in commands:
             commands[command](args)
-        elif shutil.which(command[0]):
+        elif shutil.which(command):
             subprocess.run([command] + args)
            
         else:
