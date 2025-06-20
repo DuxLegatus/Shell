@@ -12,7 +12,6 @@ commands = {
     "cd": lambda path: cd(path),
     "type": lambda *command: shell_type(command),
 }
-
 def cd(path):
     if path == "~":
         os.chdir(Path.home())
@@ -31,38 +30,39 @@ def shell_type(command):
         return f"{cmd}: not found"
 
 def redirecting(args: list):
+    redir_type = None
     if "1>" in args:
-        op = "1>"
+        redir_type = "stdout"
+        idx = args.index("1>")
     elif "2>" in args:
-        op = "2>"
+        redir_type = "stderr"
+        idx = args.index("2>")
     elif ">" in args:
-        op = ">" 
+        redir_type = "stdout"
+        idx = args.index(">")
     else:
-        op = None
-
-    if not op:
         return False
-    
 
-    idx = args.index(op)
     cmd = args[:idx]
     outfile = args[idx + 1]
+
     command = cmd[0] if cmd else ""
     command_args = cmd[1:]
-    if op == "2>":
-        with open(outfile,"w") as file:
-            file.write(f"{command}: {command_args[0]}: No such file or directory")
-            
-    else:
-        with open(outfile, "w") as f:
 
-            if command in commands:
-                result = commands[command](*command_args)
-                if result is not None:
-                    f.write(str(result) + "\n")
-            elif shutil.which(command):
-                subprocess.run([command] + command_args, stdout=f, stderr=sys.stderr)
-            else:
+    with open(outfile, "w") as f:
+        if command in commands:
+            result = commands[command](*command_args)
+            if result is not None and redir_type == "stdout":
+                f.write(str(result) + "\n")
+        elif shutil.which(command):
+            if redir_type == "stdout":
+                subprocess.run([command] + command_args, stdout=f, stderr=subprocess.DEVNULL)
+            elif redir_type == "stderr":
+                subprocess.run([command] + command_args, stderr=f, stdout=subprocess.DEVNULL)
+        else:
+            if redir_type == "stdout":
+                f.write(f"{command}: command not found\n")
+            elif redir_type == "stderr":
                 f.write(f"{command}: command not found\n")
     return True
 
