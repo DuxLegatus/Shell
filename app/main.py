@@ -31,11 +31,14 @@ def shell_type(command):
         return f"{cmd}: not found"
 
 def redirecting(args: list):
-    # Find redirection operator
     if "1>" in args:
         op = "1>"
+    elif "2>" in args:
+        op = "2>"
+    elif ">" in args:
+        op = ">" 
     else:
-        op = ">" if ">" in args else None
+        op = None
 
     if not op:
         return False
@@ -55,7 +58,7 @@ def redirecting(args: list):
         elif shutil.which(command):
             subprocess.run([command] + command_args, stdout=f, stderr=sys.stderr)
         else:
-            f.write(f"{command}: command not found\n")
+            f.write(f"{command}: {command_args[0]}: No such file or directory")
     return True
 
 def main():
