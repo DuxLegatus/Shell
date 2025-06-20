@@ -51,7 +51,7 @@ def redirecting(args: list):
     command_args = cmd[1:]
     if op == "2>":
         with open(outfile,"w") as file:
-            file.write(f"{command}: {command_args[0]} No such file or directory")
+            file.write(f"{command}: {command_args[0]}: No such file or directory")
             
     else:
         with open(outfile, "w") as f:
