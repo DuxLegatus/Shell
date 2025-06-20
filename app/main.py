@@ -42,18 +42,19 @@ def redirecting(args: list):
 
     if not op:
         return False
+    
 
     idx = args.index(op)
     cmd = args[:idx]
     outfile = args[idx + 1]
+    command = cmd[0] if cmd else ""
+    command_args = cmd[1:]
     if op == "2>":
         with open(outfile,"w") as file:
             file.write(f"{command}: {command_args[0]} No such file or directory")
             
     else:
         with open(outfile, "w") as f:
-            command = cmd[0] if cmd else ""
-            command_args = cmd[1:]
 
             if command in commands:
                 result = commands[command](*command_args)
