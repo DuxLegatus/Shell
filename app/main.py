@@ -52,8 +52,11 @@ def redirecting(args: list):
     with open(outfile, "w") as f:
         if command in commands:
             result = commands[command](*command_args)
-            if result is not None and redir_type == "stdout":
-                f.write(str(result) + "\n")
+            if result is not None:
+                if redir_type == "stdout":
+                    f.write(str(result) + "\n")
+                elif redir_type == "stderr":
+                    f.write(str(result) + "\n")
         elif shutil.which(command):
             if redir_type == "stdout":
                 subprocess.run([command] + command_args, stdout=f, stderr=subprocess.DEVNULL)
