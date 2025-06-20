@@ -5,14 +5,12 @@ import os
 from pathlib import Path
 import shlex
 
-
 commands = {
-    "echo": lambda *args:" ".join(args),
-    "exit":lambda exit_code:sys.exit(int(exit_code[0])) if exit_code else 0,
+    "echo": lambda *args: " ".join(args),
+    "exit": lambda *code: sys.exit(int(code[0])) if code else sys.exit(0),
     "pwd": lambda: os.getcwd(),
-    "cd":lambda path: cd(path),
-    "type":lambda *command: shell_type(command),
-    
+    "cd": lambda path: cd(path),
+    "type": lambda *command: shell_type(command),
 }
 
 def cd(path):
@@ -22,51 +20,69 @@ def cd(path):
         os.chdir(path)
     else:
         print(f"cd: {path}: No such file or directory")
-    
-
-def redirecting(args:list):
-    for i in args:
-        if i in [">", "1>"]:
-            idx = args.index(i)
-            first = args[:idx]
-            second = args[idx+1:]
-            with open(second[0],"w") as f:
-                f.write(commands[first[0]](*first[1:]))
-
-            break
-
-
 
 def shell_type(command):
-    if command[0] in commands:
-        return(f"{command[0]} is a shell builtin")    
-    elif shutil.which(command[0]):
-        return(f"{command[0]} is {shutil.which(command[0])}")
+    cmd = command[0]
+    if cmd in commands:
+        return f"{cmd} is a shell builtin"
+    elif shutil.which(cmd):
+        return f"{cmd} is {shutil.which(cmd)}"
     else:
-        return(f"{command[0]}: not found")
+        return f"{cmd}: not found"
 
+def redirecting(args: list):
+    # Find redirection operator
+    if "1>" in args:
+        op = "1>"
+    else:
+        op = ">" if ">" in args else None
 
+    if not op:
+        return False
+
+    idx = args.index(op)
+    cmd = args[:idx]
+    outfile = args[idx + 1]
+
+    with open(outfile, "w") as f:
+        command = cmd[0] if cmd else ""
+        command_args = cmd[1:]
+
+        if command in commands:
+            result = commands[command](*command_args)
+            if result is not None:
+                f.write(str(result) + "\n")
+        elif shutil.which(command):
+            subprocess.run([command] + command_args, stdout=f, stderr=sys.stderr)
+        else:
+            f.write(f"{command}: command not found\n")
+    return True
 
 def main():
-    # Uncomment this block to pass the first stage
     while True:
         sys.stdout.write("$ ")
-        first = shlex.split(input().strip())
-        if ">" in first or "1>" in first:
-            redirecting(first)
-            continue
-        command = first[0] if first else ""
+        try:
+            line = input().strip()
+            if not line:
+                continue
+            tokens = shlex.split(line)
+            if redirecting(tokens):
+                continue
+            command = tokens[0]
+            args = tokens[1:]
 
-        args = first[1:]
-        if command in commands:
-            print(commands[command](*args))
-        elif shutil.which(command):
-            subprocess.run([command] + args)
-           
-        else:
-            print(f"{command}: command not found")
-        
-
+            if command in commands:
+                result = commands[command](*args)
+                if result is not None:
+                    print(result)
+            elif shutil.which(command):
+                subprocess.run([command] + args)
+            else:
+                print(f"{command}: command not found")
+        except EOFError:
+            break
+        except Exception as e:
+            print(f"Error: {e}")
 
 if __name__ == "__main__":
     main()
